@@ -3,6 +3,10 @@ from datetime import timedelta
 from pathlib import Path
 from sqlalchemy.engine import URL
 
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
 # =========================================================
 # PROJECT PATHS
 # =========================================================

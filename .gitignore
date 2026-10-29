@@ -1,24 +1,18 @@
-# =====================================================
-# VR TECH SOLUTIONS - GIT IGNORE
-# =====================================================
-
 # Environment variables and secrets
 .env
 .env.*
+*.env
+.envrc
 !.env.example
-
-# Secret keys and credentials
 secrets.*
 credentials.*
 *.pem
 *.key
 
-# Python bytecode
+# Python bytecode and virtual environments
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environments
 .venv/
 venv/
 env/
@@ -32,71 +26,51 @@ dist/
 wheels/
 pip-wheel-metadata/
 
-# Test and coverage
+# Test, coverage, type checking, and linting
 .pytest_cache/
 .coverage
 .coverage.*
 htmlcov/
 .tox/
 .nox/
-
-# Type checking and linting
 .mypy_cache/
 .pyright/
 .ruff_cache/
 
-# IDE settings
+# IDE and local development settings
 .vscode/
 .idea/
 *.sublime-workspace
+.python-version
 
 # Operating system files
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Application logs
+# Application logs and temporary files
 *.log
 logs/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
 
-# Flask instance and local configuration
+# Flask instance data, databases, and private uploads
 instance/
-
-# Uploaded resumes and private files
 uploads/
 resumes/
-
-# Generated or user-uploaded static files
 app/static/uploads/
-
-# Local databases and backups
 *.sqlite
 *.sqlite3
 *.db
 *.sql.gz
 *.dump
 *.bak
-
-# Database export files containing data
 database_backup.sql
 database_export.sql
 
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-.venv/
-venv/
-__pycache__/
-*.py[cod]
-.env
-.env.*
-!.env.example
-instance/
-.pytest_cache/
+# Deployment and frontend dependencies
 .vercel/
-
-# Local development files
-.python-version
+node_modules/

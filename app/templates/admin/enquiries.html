@@ -1,0 +1,111 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Enquiries | VR Tech Solutions Admin{% endblock %}
+{% block breadcrumb %}Enquiries{% endblock %}
+
+{% block admin_content %}
+<section class="va-page-heading">
+    <div>
+        <div class="va-eyebrow">CUSTOMER COMMUNICATION</div>
+        <h1>Enquiries</h1>
+        <p>Review contact form submissions and track follow-up status.</p>
+    </div>
+    <span class="va-heading-count">
+        <strong>{{ enquiries|length }}</strong> messages
+    </span>
+</section>
+
+<section class="va-panel">
+    <div class="va-panel-heading">
+        <div>
+            <div class="va-eyebrow">INBOX</div>
+            <h2>All website enquiries</h2>
+            <p>Contact details and messages submitted through the public website.</p>
+        </div>
+        <div class="va-search-inline">
+            <i data-lucide="search"></i>
+            <input type="search" id="vaTableSearch"
+                   placeholder="Filter this table..."
+                   aria-label="Filter enquiries">
+        </div>
+    </div>
+
+    <div class="va-table-wrap">
+        <table class="va-table" id="vaFilterTable">
+            <thead>
+                <tr>
+                    <th>Contact</th>
+                    <th>Company</th>
+                    <th>Topic</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Received</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for item in enquiries %}
+                <tr>
+                    <td>
+                        <div class="va-person-cell">
+                            <span class="va-avatar">
+                                {{ (item.name|default(item.full_name|default('V', true), true))[:1]|upper }}
+                            </span>
+                            <span>
+                                <strong>{{ item.name|default(item.full_name|default('Website visitor', true), true) }}</strong>
+                                <a href="mailto:{{ item.email }}">{{ item.email }}</a>
+                                {% if item.phone %}<small>{{ item.phone }}</small>{% endif %}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>{{ item.company|default(item.company_name|default('—', true), true) }}</td>
+                    <td>{{ item.subject|default(item.service_required|default('General enquiry', true), true) }}</td>
+                    <td><div class="va-message-cell">{{ item.message|default('—', true) }}</div></td>
+
+                    <td>
+                        <form method="post"
+                              action="{{ url_for('admin.enquiry_status', item_id=item.id) }}"
+                              class="va-status-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <select name="status" aria-label="Update enquiry status">
+                                {% for status_value, status_label in [
+                                    ('new', 'New'),
+                                    ('read', 'Read'),
+                                    ('replied', 'Replied'),
+                                    ('closed', 'Closed')
+                                ] %}
+                                <option value="{{ status_value }}"
+                                    {% if item.status|default('new', true)|lower|replace(' ', '_') == status_value %}
+                                        selected
+                                    {% endif %}>
+                                    {{ status_label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <button class="va-btn va-btn-secondary va-btn-small" type="submit">
+                                Save
+                            </button>
+                        </form>
+                    </td>
+
+                    <td>{{ item.created_at.strftime('%d %b %Y') if item.created_at is defined and item.created_at else '—' }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="va-table-empty">
+                            <i data-lucide="inbox"></i>
+                            <strong>Your inbox is clear</strong>
+                            <span>New contact enquiries will show up here.</span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

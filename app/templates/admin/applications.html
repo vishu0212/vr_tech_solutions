@@ -1,0 +1,132 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Applications | VR Tech Solutions Admin{% endblock %}
+{% block breadcrumb %}Applications{% endblock %}
+
+{% block admin_content %}
+<section class="va-page-heading">
+    <div>
+        <div class="va-eyebrow">TALENT &amp; RECRUITMENT</div>
+        <h1>Applications</h1>
+        <p>Review candidates and open their privately submitted resumes.</p>
+    </div>
+    <span class="va-heading-count">
+        <strong>{{ applications|length }}</strong> applications
+    </span>
+</section>
+
+<section class="va-panel">
+    <div class="va-panel-heading">
+        <div>
+            <div class="va-eyebrow">CANDIDATES</div>
+            <h2>Job applications</h2>
+            <p>Resume files are visible to signed-in administrators only.</p>
+        </div>
+        <form class="va-search-inline" method="get" action="{{ url_for('admin.applications') }}">
+            <input type="search" name="q" value="{{ search }}"
+                   placeholder="Search candidates" aria-label="Search candidates">
+            <select name="status" aria-label="Filter by application status">
+                <option value="">All statuses</option>
+                {% for value, label in [
+                    ('new', 'New'),
+                    ('reviewing', 'Reviewing'),
+                    ('shortlisted', 'Shortlisted'),
+                    ('rejected', 'Rejected'),
+                    ('hired', 'Hired')
+                ] %}
+                <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="va-btn va-btn-secondary va-btn-small" type="submit">Filter</button>
+        </form>
+    </div>
+
+    <div class="va-table-wrap">
+        <table class="va-table">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Role</th>
+                    <th>Resume</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for application in applications %}
+                {% set resume_extension = application.resume_filename.rsplit('.', 1)[-1]|lower if application.resume_filename and '.' in application.resume_filename else '' %}
+                <tr>
+                    <td>
+                        <div class="va-person-cell">
+                            <span class="va-avatar">{{ application.full_name[:1]|upper }}</span>
+                            <span>
+                                <strong>{{ application.full_name }}</strong>
+                                <a href="mailto:{{ application.email }}">{{ application.email }}</a>
+                                <small>{{ application.phone }}</small>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>{{ application.job.title if application.job else 'Role unavailable' }}</strong>
+                        {% if application.experience %}<small>{{ application.experience }}</small>{% endif %}
+                    </td>
+                    <td>
+                        {% if application.resume_filename %}
+                        <a class="va-btn va-btn-secondary va-btn-small"
+                           href="{{ url_for('admin.application_resume', application_id=application.id) }}"
+                           target="_blank" rel="noopener">
+                            {{ 'View PDF' if resume_extension == 'pdf' else 'Open resume' }}
+                            <i data-lucide="arrow-up-right"></i>
+                        </a>
+                        {% else %}
+                        <span>Not available</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post"
+                              action="{{ url_for('admin.application_update', application_id=application.id) }}"
+                              class="va-status-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <select name="status" aria-label="Update application status">
+                                {% for value, label in [
+                                    ('new', 'New'),
+                                    ('reviewing', 'Reviewing'),
+                                    ('shortlisted', 'Shortlisted'),
+                                    ('rejected', 'Rejected'),
+                                    ('hired', 'Hired')
+                                ] %}
+                                <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button class="va-btn va-btn-secondary va-btn-small" type="submit">Save</button>
+                        </form>
+                    </td>
+                    <td>{{ application.created_at.strftime('%d %b %Y') if application.created_at else '—' }}</td>
+                </tr>
+                {% if application.cover_letter %}
+                <tr>
+                    <td colspan="5">
+                        <div class="va-message-cell">{{ application.cover_letter }}</div>
+                    </td>
+                </tr>
+                {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="5">
+                        <div class="va-table-empty">
+                            <i data-lucide="file-user"></i>
+                            <strong>No applications found</strong>
+                            <span>Submitted applications will appear here.</span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

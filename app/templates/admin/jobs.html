@@ -1,0 +1,145 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Job Listings | VR Tech Solutions Admin{% endblock %}
+{% block breadcrumb %}Jobs{% endblock %}
+
+{% block admin_content %}
+<section class="va-page-heading">
+    <div>
+        <div class="va-eyebrow">TALENT &amp; RECRUITMENT</div>
+        <h1>Job listings</h1>
+        <p>Create vacancies and keep the public Careers page up to date.</p>
+    </div>
+    <span class="va-heading-count">
+        <strong>{{ jobs|length }}</strong> listings
+    </span>
+</section>
+
+<div class="va-content-grid va-services-layout">
+    <section class="va-panel va-form-panel">
+        <div class="va-panel-heading">
+            <div>
+                <div class="va-eyebrow">NEW OPPORTUNITY</div>
+                <h2>Post a job</h2>
+                <p>Include the requirements and location clearly.</p>
+            </div>
+            <span class="va-heading-icon"><i data-lucide="user-round-plus"></i></span>
+        </div>
+
+        <form method="post" class="va-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="va-field">
+                <label for="jobTitle">Job title *</label>
+                <input id="jobTitle" name="title" maxlength="200"
+                       required placeholder="e.g. Junior Python Developer">
+            </div>
+
+            <div class="va-form-row">
+                <div class="va-field">
+                    <label for="jobDepartment">Department</label>
+                    <input id="jobDepartment" name="department"
+                           maxlength="150" placeholder="Engineering, AI, Design">
+                </div>
+                <div class="va-field">
+                    <label for="jobLocation">Location</label>
+                    <input id="jobLocation" name="location"
+                           maxlength="150" value="India"
+                           placeholder="Remote / Hyderabad">
+                </div>
+            </div>
+
+            <div class="va-form-row">
+                <div class="va-field">
+                    <label for="jobType">Employment type</label>
+                    <select id="jobType" name="employment_type">
+                        <option>Full-time</option>
+                        <option>Part-time</option>
+                        <option>Internship</option>
+                        <option>Contract</option>
+                        <option>Remote</option>
+                    </select>
+                </div>
+                <div class="va-field">
+                    <label for="jobClosingDate">Closing date</label>
+                    <input id="jobClosingDate" name="closing_date" type="date">
+                </div>
+            </div>
+
+            <div class="va-field">
+                <label for="jobDescription">Job description *</label>
+                <textarea id="jobDescription" name="description"
+                          rows="6" required
+                          placeholder="Responsibilities, requirements, skills and application instructions"></textarea>
+            </div>
+
+            <label class="va-check">
+                <input type="checkbox" name="is_active" checked>
+                <span>
+                    <strong>Accept applications</strong>
+                    <small>Show this role on the Careers page.</small>
+                </span>
+            </label>
+
+            <button type="submit" class="va-btn va-btn-primary va-btn-wide">
+                Publish job listing <i data-lucide="arrow-up-right"></i>
+            </button>
+        </form>
+    </section>
+
+    <section class="va-panel">
+        <div class="va-panel-heading">
+            <div>
+                <div class="va-eyebrow">CURRENT LISTINGS</div>
+                <h2>Open and archived roles</h2>
+                <p>Check status and manage availability.</p>
+            </div>
+        </div>
+
+        <div class="va-manage-list">
+        {% for job in jobs %}
+            <article class="va-manage-item">
+                <span class="va-manage-icon">
+                    <i data-lucide="briefcase"></i>
+                </span>
+
+                <div class="va-manage-info">
+                    <div class="va-manage-title-line">
+                        <strong>{{ job.title }}</strong>
+                        <span class="va-status-badge {{ 'va-status-active' if job.is_active else 'va-status-hidden' }}">
+                            {{ 'Open' if job.is_active else 'Closed' }}
+                        </span>
+                    </div>
+                    <p>
+                        {{ job.department|default('General', true) }} ·
+                        {{ job.location|default('Location not set', true) }}
+                    </p>
+                    <small>
+                        {{ job.employment_type|default('Employment type not set', true) }}
+                        {% if job.closing_date %}
+                            · Closes {{ job.closing_date.strftime('%d %b %Y') if job.closing_date.strftime is defined else job.closing_date }}
+                        {% endif %}
+                    </small>
+                </div>
+
+                <div class="va-row-actions">
+                    <form method="post"
+                          action="{{ url_for('admin.toggle_job', item_id=job.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="va-btn va-btn-secondary va-btn-small">
+                            {{ 'Close' if job.is_active else 'Reopen' }}
+                        </button>
+                    </form>
+                </div>
+            </article>
+        {% else %}
+            <div class="va-empty-state">
+                <i data-lucide="clipboard-list"></i>
+                <strong>No job listings</strong>
+                <p>Post your first opportunity using the form.</p>
+            </div>
+        {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

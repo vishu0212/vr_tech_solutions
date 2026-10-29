@@ -1,0 +1,102 @@
+# =====================================================
+# VR TECH SOLUTIONS - GIT IGNORE
+# =====================================================
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Secret keys and credentials
+secrets.*
+credentials.*
+*.pem
+*.key
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking and linting
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# IDE settings
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Application logs
+*.log
+logs/
+
+# Flask instance and local configuration
+instance/
+
+# Uploaded resumes and private files
+uploads/
+resumes/
+
+# Generated or user-uploaded static files
+app/static/uploads/
+
+# Local databases and backups
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+*.dump
+*.bak
+
+# Database export files containing data
+database_backup.sql
+database_export.sql
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+instance/
+.pytest_cache/
+.vercel/
+
+# Local development files
+.python-version
